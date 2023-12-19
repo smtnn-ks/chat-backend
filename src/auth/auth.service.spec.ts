@@ -19,7 +19,7 @@ describe('AuthService', () => {
   })
 
   afterAll(async () => {
-    if (userId) service.delete(userId)
+    if (userId) await service.delete(userId)
     else console.error('userId is not specified')
   })
 
@@ -37,11 +37,9 @@ describe('AuthService', () => {
     })
 
     it('should not work twice: Email is taken', async () => {
-      try {
-        await service.signup('test@mail.com', '12341234')
-      } catch (e) {
-        expect(e).toBeInstanceOf(BadRequestException)
-      }
+      await expect(
+        service.signup('test@mail.com', '12341234'),
+      ).rejects.toBeInstanceOf(BadRequestException)
     })
   })
 
@@ -61,12 +59,12 @@ describe('AuthService', () => {
       })
     })
     it('email is not registered', async () => {
-      expect(
+      await expect(
         service.signin('wrong@mail.com', '12341234'),
       ).rejects.toBeInstanceOf(BadRequestException)
     })
     it('wrong password', async () => {
-      expect(
+      await expect(
         service.signin('test@mail.com', '11111111'),
       ).rejects.toBeInstanceOf(BadRequestException)
     })
@@ -82,12 +80,12 @@ describe('AuthService', () => {
       })
     })
     it('wrong id', async () => {
-      expect(service.refresh('1', userRefreshToken)).rejects.toBeInstanceOf(
-        UnauthorizedException,
-      )
+      await expect(
+        service.refresh('1', userRefreshToken),
+      ).rejects.toBeInstanceOf(UnauthorizedException)
     })
     it('wrong refresh token', async () => {
-      expect(
+      await expect(
         service.refresh(userId, 'wrong-refresh-token'),
       ).rejects.toBeInstanceOf(UnauthorizedException)
     })
@@ -95,13 +93,15 @@ describe('AuthService', () => {
 
   describe('logout', () => {
     it('ok', async () => {
-      expect(service.logout(userId)).resolves.toEqual({
+      await expect(service.logout(userId)).resolves.toEqual({
         id: userId,
         refreshToken: null,
       })
     })
     it('wrong id', async () => {
-      expect(service.logout('1')).rejects.toBeInstanceOf(BadRequestException)
+      await expect(service.logout('1')).rejects.toBeInstanceOf(
+        BadRequestException,
+      )
     })
   })
 })

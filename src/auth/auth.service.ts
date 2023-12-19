@@ -9,7 +9,6 @@ import { nanoid } from 'nanoid'
 import { JwtService } from '@nestjs/jwt'
 import { Tokens } from './types'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { async } from 'rxjs'
 
 @Injectable()
 export class AuthService {
@@ -56,11 +55,6 @@ export class AuthService {
     const verify = this.crypto.compareSync(refreshToken, candidate.refreshToken)
     if (!verify) throw new UnauthorizedException('Невалидный токен обновления')
     const tokens = await this.generateTokens(candidate.id)
-    const hashRefreshToken = this.crypto.hashSync(tokens.refreshToken)
-    await this.prisma.user.update({
-      where: { id: candidate.id },
-      data: { refreshToken: hashRefreshToken },
-    })
     return tokens
   }
 
