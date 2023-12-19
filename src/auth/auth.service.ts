@@ -46,6 +46,16 @@ export class AuthService {
       this.crypto.generateRsaKeyPair(),
     ])
 
+    this.crypto.hash(tokens.refreshToken).then(async (hashRefreshToken) => {
+      await this.prisma.user.update({
+        where: { id: candidate.id },
+        data: {
+          refreshToken: hashRefreshToken,
+          publicKey: keys.publicKey,
+        },
+      })
+    })
+
     return { tokens, keys }
   }
 
@@ -91,12 +101,6 @@ export class AuthService {
         { secret: process.env.JWT_REFRESH_SECRET, expiresIn: '7d' },
       ),
     ])
-    this.crypto.hash(refreshToken).then(async (hashRefreshToken) => {
-      await this.prisma.user.update({
-        where: { id },
-        data: { refreshToken: hashRefreshToken },
-      })
-    })
     return { accessToken, refreshToken }
   }
 }
