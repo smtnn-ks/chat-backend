@@ -52,10 +52,11 @@ describe('AuthService', () => {
           accessToken: expect.any(String),
           refreshToken: expect.any(String),
         },
-        keys: {
-          publicKey: expect.any(String),
-          privateKey: expect.any(String),
+        user: {
+          id: expect.any(String),
+          nickname: expect.any(String),
         },
+        privateKey: expect.any(String),
       })
     })
     it('email is not registered', async () => {

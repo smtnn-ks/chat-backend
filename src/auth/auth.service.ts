@@ -7,7 +7,7 @@ import { PrismaService } from '../dependencies/prisma/prisma.service'
 import { CryptoService } from '../dependencies/crypto/crypto.service'
 import { nanoid } from 'nanoid'
 import { JwtService } from '@nestjs/jwt'
-import { Tokens } from './types'
+import { Tokens, UserSigninInfo } from './types'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 @Injectable()
@@ -35,7 +35,7 @@ export class AuthService {
     })
   }
 
-  async signin(email: string, password: string) {
+  async signin(email: string, password: string): Promise<UserSigninInfo> {
     const candidate = await this.prisma.user.findUnique({ where: { email } })
     if (!candidate) throw new BadRequestException('Email не зарегистрирован')
     const verify = this.crypto.compareSync(password, candidate.password)
@@ -56,7 +56,14 @@ export class AuthService {
       })
     })
 
-    return { tokens, keys }
+    return {
+      tokens,
+      privateKey: keys.privateKey,
+      user: {
+        id: candidate.id,
+        nickname: candidate.nickname,
+      },
+    }
   }
 
   async refresh(id: string, refreshToken: string) {
