@@ -1,4 +1,4 @@
-export class Keys {
+export type Keys = {
   publicKey: string
   privateKey: string
 }

@@ -1,3 +1,3 @@
-export class JwtPayload {
+export type JwtPayload = {
   sub: string
 }
