@@ -44,7 +44,16 @@ export class CryptoService {
           },
           (err: Error | null, publicKey: string, privateKey: string) => {
             if (err) reject(err)
-            resolve({ publicKey, privateKey })
+            resolve({
+              publicKey: publicKey
+                .replace('-----BEGIN PUBLIC KEY-----', '')
+                .replace('-----END PUBLIC KEY-----', '')
+                .replaceAll('\n', ''),
+              privateKey: privateKey
+                .replace('-----BEGIN PRIVATE KEY-----', '')
+                .replace('-----END PRIVATE KEY-----', '')
+                .replaceAll('\n', ''),
+            })
           },
         )
       },
