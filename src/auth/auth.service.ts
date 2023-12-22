@@ -69,9 +69,17 @@ export class AuthService {
   async refresh(id: string, refreshToken: string) {
     const candidate = await this.prisma.user.findUnique({ where: { id } })
     if (!candidate) throw new UnauthorizedException()
+
     const verify = this.crypto.compareSync(refreshToken, candidate.refreshToken)
     if (!verify) throw new UnauthorizedException('Невалидный токен обновления')
+
     const tokens = await this.generateTokens(candidate.id)
+    const hashRefreshToken = this.crypto.hashSync(tokens.refreshToken)
+    await this.prisma.user.update({
+      where: { id },
+      data: { refreshToken: hashRefreshToken },
+    })
+
     return tokens
   }
 
