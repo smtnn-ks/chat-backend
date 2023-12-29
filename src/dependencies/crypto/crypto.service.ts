@@ -1,9 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import * as crypto from 'crypto'
 import { Keys } from 'src/auth/types'
+import { readFileSync } from 'fs'
 
 @Injectable()
 export class CryptoService {
+  private privateKey: crypto.KeyObject
+
+  constructor() {
+    const raw = readFileSync('private.pem')
+    this.privateKey = crypto.createPrivateKey(raw)
+  }
+
   hashSync(input: string) {
     const hash = crypto.createHash('sha512')
     hash.update(input)
@@ -58,5 +66,19 @@ export class CryptoService {
         )
       },
     )
+  }
+
+  async signMessage(message: string): Promise<string> {
+    const sign = crypto.createSign('sha512')
+    sign.update(message)
+    sign.end()
+    return sign.sign(this.privateKey, 'base64')
+  }
+
+  signMessageSync(message: string): string {
+    const sign = crypto.createSign('sha512')
+    sign.update(message)
+    sign.end()
+    return sign.sign(this.privateKey, 'base64')
   }
 }

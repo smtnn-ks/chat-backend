@@ -14,4 +14,14 @@ model User {
   nickname String
   refreshToken String? 
   publicKey String? 
+  pendingMessages PendingMessage[]
+}
+
+model PendingMessage {
+  id Int @id @default(autoincrement())
+  userId String 
+  content String
+  info String
+  signature String
+  user User @relation(fields: [userId], references: [id])
 }
