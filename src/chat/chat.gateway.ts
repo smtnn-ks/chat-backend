@@ -9,6 +9,7 @@ import {
 import { ChatService } from './chat.service'
 import { Server, Socket } from 'socket.io'
 import { CreateMessageDto } from './dto'
+import { SignedMessage } from './types'
 
 @WebSocketGateway(5001, {
   cors: {
@@ -26,6 +27,17 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log(`INFO :: userId from handshake: ${userId}`)
     if (typeof userId === 'string' && userId !== 'null') {
       this.chatService.handleConnection(userId, socket.id)
+      this.chatService.getPendingMessage(userId).then((result) => {
+        console.log(`INFO :: ${userId} pending messages: ${result}`)
+        if (result.length > 0) {
+          console.log(`INFO :: ${userId} has pending messages. Sending.`)
+          // FIXME: This is ugly
+          setTimeout(
+            () => socket.emit('pending', result as SignedMessage[]),
+            1000,
+          )
+        }
+      })
     } else {
       console.warn(
         `WARN :: socket ${socket.id} is trying to connect without 'userId' provided`,
