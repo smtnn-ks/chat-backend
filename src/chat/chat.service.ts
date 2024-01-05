@@ -15,10 +15,6 @@ export class ChatService {
 
   handleConnection(userId: string, socketId: string) {
     this.userToSocket[userId] = socketId
-    console.log(
-      `INFO :: ${userId} joined, current state is:`,
-      this.userToSocket,
-    )
   }
 
   handleDisconnect(socketId: string) {
@@ -28,7 +24,6 @@ export class ChatService {
     if (index !== -1) {
       const key = Object.keys(this.userToSocket)[index]
       delete this.userToSocket[key]
-      console.log(`INFO :: ${key} left, current state is:`, this.userToSocket)
     }
   }
 

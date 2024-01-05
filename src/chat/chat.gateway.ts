@@ -24,13 +24,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
   handleConnection(socket: Socket) {
     const userId = socket.handshake.query.id
-    console.log(`INFO :: userId from handshake: ${userId}`)
     if (typeof userId === 'string' && userId !== 'null') {
       this.chatService.handleConnection(userId, socket.id)
       this.chatService.getPendingMessage(userId).then((result) => {
-        console.log(`INFO :: ${userId} pending messages: ${result}`)
         if (result.length > 0) {
-          console.log(`INFO :: ${userId} has pending messages. Sending.`)
           // FIXME: This is ugly
           setTimeout(
             () => socket.emit('pending', result as SignedMessage[]),
