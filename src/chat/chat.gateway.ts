@@ -11,11 +11,7 @@ import { Server, Socket } from 'socket.io'
 import { CreateMessageDto } from './dto'
 import { SignedMessage } from './types'
 
-@WebSocketGateway(5001, {
-  cors: {
-    origin: '*',
-  },
-})
+@WebSocketGateway()
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server
