@@ -14,7 +14,7 @@ async function bootstrap() {
     ca: readFileSync(process.env.SSL_CA_PATH),
   }
 
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule, { httpsOptions })
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
   await app.listen(PORT, () => console.log(`Running on port ${PORT}...`))
