@@ -44,15 +44,16 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   }
 
   @SubscribeMessage('createMessage')
-  async createMessage(@MessageBody() createMessageDto: CreateMessageDto) {
-    const messageToSend = await this.chatService.createMessage(createMessageDto)
-    if (messageToSend) {
-      this.server
-        .fetchSockets()
-        .then((sockets) =>
-          sockets.find((socket) => socket.id === messageToSend.socketId),
-        )
-        .then((socket) => socket.emit('message', messageToSend.signedMessage))
-    }
+  createMessage(@MessageBody() createMessageDto: CreateMessageDto) {
+    this.chatService.createMessage(createMessageDto).then((messageToSend) => {
+      if (messageToSend) {
+        this.server
+          .fetchSockets()
+          .then((sockets) =>
+            sockets.find((socket) => socket.id === messageToSend.socketId),
+          )
+          .then((socket) => socket.emit('message', messageToSend.signedMessage))
+      }
+    })
   }
 }
