@@ -9,8 +9,9 @@ async function bootstrap() {
   const PORT = process.env.PORT || 6969
 
   const httpsOptions = {
-    key: readFileSync('key.pem'),
-    cert: readFileSync('server.crt'),
+    key: readFileSync(process.env.SSL_KEY_PATH),
+    cert: readFileSync(process.env.SSL_CRT_PATH),
+    ca: readFileSync(process.env.SSL_CA_PATH),
   }
 
   const app = await NestFactory.create(AppModule)
