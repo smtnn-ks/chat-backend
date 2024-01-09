@@ -17,10 +17,12 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { httpsOptions })
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
-  await app.listen(PORT, () => console.log(`Running on port ${PORT}...`))
 
   const httpsServer = createServer(httpsOptions)
   app.useWebSocketAdapter(new ExtendedSocketIoAdapter(httpsServer))
+
+  await app.listen(PORT, () => console.log(`Running on port ${PORT}...`))
+
   httpsServer.listen(5001, () =>
     console.log(`WS server is running on port 5001...`),
   )
