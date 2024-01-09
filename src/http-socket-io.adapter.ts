@@ -1,11 +1,11 @@
 import { IoAdapter } from '@nestjs/platform-socket.io'
 import * as io from 'socket.io'
-import * as https from 'node:https'
+import * as http from 'node:http'
 
-export class HttpsSocketIoAdapter extends IoAdapter {
+export class HttpSocketIOAdapter extends IoAdapter {
   protected ioServer: io.Server
 
-  constructor(protected server: https.Server) {
+  constructor(protected server: http.Server) {
     super()
 
     const options = {
