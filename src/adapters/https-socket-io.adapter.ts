@@ -20,9 +20,7 @@ export class HttpsSocketIoAdapter extends IoAdapter {
   }
 
   create() {
-    console.log(
-      'websocket gateway port argument is ignored by ExtendedSocketIoAdapter, use the same port of http instead',
-    )
+    console.log('INFO :: HttpsSocketIOAdapter is initialized')
     return this.ioServer
   }
 }

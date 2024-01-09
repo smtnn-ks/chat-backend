@@ -4,11 +4,11 @@ import { ValidationPipe } from '@nestjs/common'
 import { readFileSync } from 'node:fs'
 import * as https from 'node:https'
 import * as http from 'node:http'
-import { HttpsSocketIoAdapter } from './extended-web-socket-adapter'
-import { HttpSocketIOAdapter } from './http-socket-io.adapter'
+import { HttpsSocketIoAdapter, HttpSocketIOAdapter } from './adapters'
 
 async function bootstrap() {
-  const PORT = process.env.PORT || 6969
+  const REST_PORT = process.env.REST_PORT || 6969
+  const WS_PORT = process.env.WS_PORT || 6666
 
   let app: any
   let wsServer: any
@@ -33,10 +33,12 @@ async function bootstrap() {
   app.enableCors()
   app.useGlobalPipes(new ValidationPipe())
 
-  await app.listen(PORT, () => console.log(`Running on port ${PORT}...`))
+  await app.listen(REST_PORT, () =>
+    console.log(`INFO :: REST server is running on port ${REST_PORT}...`),
+  )
 
-  wsServer.listen(5001, () =>
-    console.log(`WS server is running on port 5001...`),
+  wsServer.listen(WS_PORT, () =>
+    console.log(`INFO :: WS server is running on port ${WS_PORT}...`),
   )
 }
 bootstrap()
