@@ -16,7 +16,10 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService) {
+    // constructor fires before server is initialized
+    setTimeout(() => this.chatService.initOnlineListEmitter(this.server), 1_000)
+  }
 
   handleConnection(socket: Socket) {
     const userId = socket.handshake.query.id

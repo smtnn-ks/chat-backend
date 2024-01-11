@@ -3,6 +3,7 @@ import { CryptoService } from 'src/dependencies/crypto/crypto.service'
 import { PrismaService } from 'src/dependencies/prisma/prisma.service'
 import { CreateMessageDto } from './dto'
 import { MessageToSend, SignedMessage } from './types'
+import { Server } from 'socket.io'
 
 @Injectable()
 export class ChatService {
@@ -50,5 +51,10 @@ export class ChatService {
       throw e
     })
     return result
+  }
+
+  initOnlineListEmitter(server: Server) {
+    const getOnlineList = () => Object.keys(this.userToSocket)
+    setInterval(() => server.emit('onlineList', getOnlineList()), 5_000)
   }
 }
